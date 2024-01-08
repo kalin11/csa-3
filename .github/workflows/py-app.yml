@@ -25,9 +25,9 @@ jobs:
     - name: Install project
       run: |
         poetry install
-    - name: Lint with pylint
+    - name: Lint with ruff
       run: |
-        make lint
+        poetry run python -m ruff lab3
   test:
     runs-on: ubuntu-latest
     steps:
@@ -44,5 +44,5 @@ jobs:
         poetry install
     - name: Run tests
       run: |
-        make test-cov
+        poetry run pytest ./tests -v
     needs: lint

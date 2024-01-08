@@ -442,7 +442,7 @@ def simulation(mem: list[MachineWord], input_tokens: list[str], limit: int, stat
     control_unit = ControlUnit(data_path)
     instr_counter = 0
 
-    with open(static_mem, "r") as file:
+    with open(static_mem, encoding="utf-8") as file:
         # Чтение строки из файла
         line = file.readline()
 

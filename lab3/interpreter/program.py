@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from lab3.machine.isa import Opcode, MachineWord, Register, StaticMemoryAddressStub, SP
 from lab3.interpreter.parser import AstType
+from lab3.machine.isa import Opcode, MachineWord, Register, StaticMemoryAddressStub, SP
 
 ast_type2opcode = {
     AstType.EQ: Opcode.JE,
@@ -101,7 +101,7 @@ class Program:
         size: int = len(value)
         for char in value:
             self.add_data_to_static_memory(ord(char))
-        self.add_data_to_static_memory(ord('\0'))
+        self.add_data_to_static_memory(ord("\0"))
         size += 1
         return self.current_static_offset - size
 

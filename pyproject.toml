@@ -37,8 +37,6 @@ select = [
     "W",
     # pep8-naming (style linter, pep8 naming conventions)
     "N",
-    # isort (imports sorting)
-    "I",
     # mccabe (cyclomatic complexity analyzer to prevent overcomplicated functions)
     "C90",
     # pyupgrade (possible syntax upgrades checker)
@@ -51,8 +49,6 @@ select = [
     # "ANN",  # too burdensome
     # flake8-async (async-related mistakes/errors)
     "ASYNC",
-    # flake8-builtins (checks builtin names shadowing, it's better not to)
-    "A",
     # flake8-commas (to enforce trailing commas)
     "COM",
     # flake8-future-annotations (to ensure enabling modern (3.7+) postponed evaluation of type hints)
@@ -73,8 +69,6 @@ select = [
     "PTH",
     # pandas-vet (pandas-related advices)
     "PD",
-    # tryceratops (try/except-related advices)
-    "TRY",
     # ruff-specific advices
     "RUF",
 ]
