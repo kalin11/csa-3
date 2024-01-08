@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "kalin-csa-lab3"
+name = "csa-lab-3-last"
 version = "0.1.1"
 description = "CSA lab 3"
 authors = ["Artem Lysenko <kalin@kalin.ru>"]

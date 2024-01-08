@@ -1,8 +1,5 @@
-let i = 5;
-let b = "hello";
-while (i > 0) {
-    print_int(i);
-    print_string(b);
-    print_string("\n");
-    i = i - 1;
-}
+let c = read_char();
+  while(c != 0) {
+    print_char(c);
+    c = read_char();
+  }

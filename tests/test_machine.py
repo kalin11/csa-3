@@ -5,8 +5,8 @@ import os
 import tempfile
 
 import pytest
-from interpreter import Translator
-from machine import VirtualMachine
+from lab3.interpreter import translator
+from lab3.machine import virtual_machine
 
 
 @pytest.mark.golden_test("golden/*.yml")
@@ -27,9 +27,9 @@ def test_translator_and_machine(golden, caplog):
             file.write(golden["static_mem"])
 
         with contextlib.redirect_stdout(io.StringIO()) as stdout:
-            Translator.main(source, target)
+            translator.main(source, target)
             print("============================================================")
-            VirtualMachine.main(target, input_stream, static_mem)
+            virtual_machine.main(target, input_stream, static_mem)
 
         with open(target, encoding="utf-8") as file:
             code = file.read()

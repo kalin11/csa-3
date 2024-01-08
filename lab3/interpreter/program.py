@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from interpreter.Parser import AstType
-from machine.ISA import Opcode, MachineWord, Register, StaticMemoryAddressStub, SP
+from lab3.machine.isa import Opcode, MachineWord, Register, StaticMemoryAddressStub, SP
+from lab3.interpreter.parser import AstType
 
 ast_type2opcode = {
     AstType.EQ: Opcode.JE,

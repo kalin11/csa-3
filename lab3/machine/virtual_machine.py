@@ -3,9 +3,8 @@ from __future__ import annotations
 import logging
 import sys
 from enum import Enum
-from typing import Tuple
 
-from machine.ISA import MachineWord, Opcode, Register, SP, PC, DR, read_code_from_file, StaticMemoryAddressStub
+from lab3.machine.isa import MachineWord, Opcode, Register, SP, PC, DR, read_code_from_file
 
 
 class Alu:
@@ -87,7 +86,7 @@ class DataPath:
     def get_instruction(self, address: int) -> MachineWord:
         return self.instruction_memory[address]
 
-    def work_with_memory(self, oe: bool, wr: bool, address: int, static_data: int = 0) -> MachineWord | None | int:
+    def work_with_memory_2(self, oe: bool, wr: bool, address: int, static_data: int = 0) -> MachineWord | None | int:
         instruction: MachineWord = self.get_instruction(address)
         if oe:
             if static_data == 1:
@@ -95,8 +94,15 @@ class DataPath:
             return instruction
         if wr:
             instruction.arg1 = self.registers[DR]
+            self.data_memory[address] = self.registers[DR]
         return None
 
+    def work_with_memory(self, oe: bool, wr: bool, address: int, static_data: int = 0) -> int | None:
+        if oe:
+            return self.data_memory[address]
+        if wr:
+            self.data_memory[address] = self.registers[DR]
+        return None
 
     def read_from_mem(self, address: int) -> int:
         return self.data_memory[address]
@@ -113,7 +119,7 @@ class DataPath:
     def read_char(self, port: int) -> int:
         if len(self.input_ports[port]) == 0:
             return 0
-        return ord(str(self.input_ports[port][0]))
+        return ord(self.input_ports[port].pop(0))
 
     def write_char(self, char: int, port: int) -> None:
         self.output_ports[port].append(chr(char))
@@ -185,10 +191,13 @@ class ControlUnit:
     def ld_address(self, instruction: MachineWord) -> None:
         address: int = instruction.arg2
         register: Register = instruction.arg1
-        data: MachineWord = self.data_path.work_with_memory(True, False, address)
-        self.data_path.latch_register(DR, data.arg1)
+        # data: MachineWord = self.data_path.work_with_memory(True, False, address)
+        data: int | None = self.data_path.work_with_memory(True, False, address)
+        # self.data_path.latch_register(DR, data.arg1)
+        self.data_path.latch_register(DR, data)
         self.tick()
-        self.data_path.latch_register(register, data.arg1)
+        # self.data_path.latch_register(register, data.arg1)
+        self.data_path.latch_register(register, data)
         self.tick()
 
     def ld_literal(self, instruction: MachineWord) -> None:
@@ -209,21 +218,24 @@ class ControlUnit:
             self.tick()
             self.data_path.latch_register(register_to, data)
             self.tick()
-        else:
-            data: MachineWord = self.data_path.work_with_memory(True, False, address_to_read)
-            self.data_path.latch_register(DR, data.arg1)
-            self.tick()
-            self.data_path.latch_register(register_to, data.arg1)
-            self.tick()
+        # else:
+        #     data: MachineWord = self.data_path.work_with_memory_2(True, False, address_to_read)
+        #     self.data_path.latch_register(DR, data.arg1)
+        #     self.tick()
+        #     self.data_path.latch_register(register_to, data.arg1)
+        #     self.tick()
 
     def ld_stack(self, instruction: MachineWord) -> None:
         register_to: Register = instruction.arg1
         address: int = self.data_path.memory_size - instruction.arg2 - 1
         self.tick()
-        data: MachineWord = self.data_path.work_with_memory(True, False, address)
-        self.data_path.latch_register(DR, data.arg1)
+        # data: MachineWord = self.data_path.work_with_memory(True, False, address)
+        data: int | None = self.data_path.work_with_memory(True, False, address)
+        # self.data_path.latch_register(DR, data.arg1)
+        self.data_path.latch_register(DR, data)
         self.tick()
-        self.data_path.latch_register(register_to, data.arg1)
+        # self.data_path.latch_register(register_to, data.arg1)
+        self.data_path.latch_register(register_to, data)
         self.tick()
 
     def st_address(self, instruction: MachineWord) -> None:
@@ -233,7 +245,7 @@ class ControlUnit:
         self.tick()
         self.data_path.latch_register(DR, register_data)
         self.tick()
-        self.data_path.work_with_memory(False, True, address)
+        self.data_path.work_with_memory(False, True, address, static_data=1)
         self.tick()
 
     def st(self, instruction: MachineWord) -> None:
@@ -327,10 +339,13 @@ class ControlUnit:
         self.tick()
         address: int = self.data_path.execute_arithmetic(Opcode.ADD, self.data_path.registers[SP], 0)
         self.tick()
-        data: MachineWord = self.data_path.work_with_memory(True, False, address)
-        self.data_path.latch_register(DR, data.arg1)
+        # data: MachineWord = self.data_path.work_with_memory(True, False, address)
+        data: int | None = self.data_path.work_with_memory(True, False, address)
+        # self.data_path.latch_register(DR, data.arg1)
+        self.data_path.latch_register(DR, data)
         self.tick()
-        self.data_path.latch_register(instruction.arg1, data.arg1)
+        # self.data_path.latch_register(instruction.arg1, data.arg1)
+        self.data_path.latch_register(instruction.arg1, data)
         self.tick()
 
     def cmp(self, instruction: MachineWord) -> None:

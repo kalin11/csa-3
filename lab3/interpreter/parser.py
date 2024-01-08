@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from enum import Enum
 
-from exceptions.InvalidStatementException import InvalidStatementError
-from interpreter.Lexer import Token, lexing
+from lab3.exceptions.invalid_statement_error import InvalidStatementError
+from lab3.interpreter.lexer import Token, lexing
 
 
 class AstType(Enum):
@@ -54,10 +56,10 @@ class AstNode:
         self.value = value
 
     @classmethod
-    def from_token(cls, token: Token, value: str = "") -> """AstNode""":
+    def from_token(cls, token: Token, value: str = "") -> AstNode:
         return cls(map_token_to_type(token), value)
 
-    def add_child(self, node: """AstNode""") -> None:
+    def add_child(self, node: AstNode) -> None:
         self.children.append(node)
 
 

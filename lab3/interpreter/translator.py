@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import sys
 
-from exceptions.IllegalTokenException import IllegalTokenException
-from interpreter.Parser import parse, AstNode, AstType
-from interpreter.Program import Program, inverted_conditions, ast_type2opcode
-from machine.ISA import write_machine_code_to_file, MachineWord, Opcode, Register, SP, StaticMemoryAddressStub
+from lab3.exceptions.illegal_token_error import IllegalTokenError
+from lab3.interpreter.parser import parse, AstNode, AstType
+from lab3.interpreter.program import Program, inverted_conditions, ast_type2opcode
+from lab3.machine.isa import write_machine_code_to_file, MachineWord, Opcode, Register, StaticMemoryAddressStub
 
 
 def ast_to_machine_code(root: AstNode) -> list[MachineWord]:
@@ -14,7 +14,7 @@ def ast_to_machine_code(root: AstNode) -> list[MachineWord]:
         ast_to_machine_code_rec(child, program)
     program.add_instruction(Opcode.HALT)
     static_memory: list[int] = program.resolve_static_mem()
-    with open("../static_mem.txt", "w") as file:
+    with open("../../static_mem.txt", "w") as file:
         # Преобразуем числа в строки и записываем их в файл
         file.write(" ".join(map(str, static_memory)))
     return program.machine_code
@@ -34,7 +34,7 @@ def ast_to_machine_code_rec(node: AstNode, program: Program) -> None:
         ast_to_machine_code_assign(node, program)
 
     else:
-        raise IllegalTokenException("Invalid ast node type {}".format(node.astType.name))
+        raise IllegalTokenError("Invalid ast node type {}".format(node.astType.name))
 
 
 def parse_expression(node: AstNode, program: Program) -> int | None:
@@ -327,6 +327,6 @@ def main(source, target) -> None:
 
 
 if __name__ == "__main__":
-    assert len(sys.argv) == 3, "Wrong args: Translator.py <source> <target>"
+    assert len(sys.argv) == 3, "Wrong args: translator.py <source> <target>"
     _, source, target = sys.argv
     main(source, target)
