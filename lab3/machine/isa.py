@@ -76,6 +76,7 @@ class Register(Enum):
     r13 = 13
     r14 = 14
     r15 = 15
+    r16 = 16
 
 
 SP: Register = Register.r14

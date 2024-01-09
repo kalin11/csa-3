@@ -73,7 +73,7 @@ class DataPath:
         self.data_memory = [None] * memory_size
         self.input_ports = ports
         self.output_ports[0] = []
-        for register_number in range(0, 16):
+        for register_number in range(0, 17):
             self.registers[Register(register_number)] = 0
         self.registers[SP] = self.memory_size - 1
 
@@ -86,18 +86,7 @@ class DataPath:
     def get_instruction(self, address: int) -> MachineWord:
         return self.instruction_memory[address]
 
-    def work_with_memory_2(self, oe: bool, wr: bool, address: int, static_data: int = 0) -> MachineWord | None | int:
-        instruction: MachineWord = self.get_instruction(address)
-        if oe:
-            if static_data == 1:
-                return self.data_memory[address]
-            return instruction
-        if wr:
-            instruction.arg1 = self.registers[DR]
-            self.data_memory[address] = self.registers[DR]
-        return None
-
-    def work_with_memory(self, oe: bool, wr: bool, address: int, static_data: int = 0) -> int | None:
+    def work_with_memory(self, oe: bool, wr: bool, address: int) -> int | None:
         if oe:
             return self.data_memory[address]
         if wr:
@@ -191,12 +180,11 @@ class ControlUnit:
     def ld_address(self, instruction: MachineWord) -> None:
         address: int = instruction.arg2
         register: Register = instruction.arg1
-        # data: MachineWord = self.data_path.work_with_memory(True, False, address)
+        if isinstance(address, Register):
+            address = self.data_path.registers[register]
         data: int | None = self.data_path.work_with_memory(True, False, address)
-        # self.data_path.latch_register(DR, data.arg1)
         self.data_path.latch_register(DR, data)
         self.tick()
-        # self.data_path.latch_register(register, data.arg1)
         self.data_path.latch_register(register, data)
         self.tick()
 
@@ -213,28 +201,19 @@ class ControlUnit:
                                                                  self.data_path.registers[address_register])
         self.tick()
         if instruction.static_data == 1:
-            data: int = self.data_path.work_with_memory(True, False, address_to_read, instruction.static_data)
+            data: int = self.data_path.work_with_memory(True, False, address_to_read)
             self.data_path.latch_register(DR, data)  # в DR значение
             self.tick()
             self.data_path.latch_register(register_to, data)
             self.tick()
-        # else:
-        #     data: MachineWord = self.data_path.work_with_memory_2(True, False, address_to_read)
-        #     self.data_path.latch_register(DR, data.arg1)
-        #     self.tick()
-        #     self.data_path.latch_register(register_to, data.arg1)
-        #     self.tick()
 
     def ld_stack(self, instruction: MachineWord) -> None:
         register_to: Register = instruction.arg1
         address: int = self.data_path.memory_size - instruction.arg2 - 1
         self.tick()
-        # data: MachineWord = self.data_path.work_with_memory(True, False, address)
         data: int | None = self.data_path.work_with_memory(True, False, address)
-        # self.data_path.latch_register(DR, data.arg1)
         self.data_path.latch_register(DR, data)
         self.tick()
-        # self.data_path.latch_register(register_to, data.arg1)
         self.data_path.latch_register(register_to, data)
         self.tick()
 
@@ -339,12 +318,9 @@ class ControlUnit:
         self.tick()
         address: int = self.data_path.execute_arithmetic(Opcode.ADD, self.data_path.registers[SP], 0)
         self.tick()
-        # data: MachineWord = self.data_path.work_with_memory(True, False, address)
         data: int | None = self.data_path.work_with_memory(True, False, address)
-        # self.data_path.latch_register(DR, data.arg1)
         self.data_path.latch_register(DR, data)
         self.tick()
-        # self.data_path.latch_register(instruction.arg1, data.arg1)
         self.data_path.latch_register(instruction.arg1, data)
         self.tick()
 
@@ -452,6 +428,7 @@ def simulation(mem: list[MachineWord], input_tokens: list[str], limit: int, stat
         # Преобразование строк в целые числа
         numbers = [int(num) for num in numbers_str]
         data_path.data_memory[:len(numbers)] = numbers
+        data_path.registers[Register.r16] = len(numbers)
 
     logging.debug("%s", control_unit)
     try:

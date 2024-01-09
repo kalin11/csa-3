@@ -124,9 +124,7 @@ def ast_to_machine_code_print(node: AstNode, program: Program) -> None:
             assert var_addr is not None
             program.add_instruction(Opcode.LD_STACK, Register.r9, var_addr)
         program.add_instruction(Opcode.MV, Register.r9, Register.r11)  # адрес буффера из r9 в r11
-        # program.add_instruction(Opcode.INC, Register.r11)  # первый байт данных
         program.add_instruction(Opcode.LD, Register.r9, Register.r9, static_data=1)  # теперь в r9 первый символ строки
-        # program.add_instruction(Opcode.LD_LITERAL, Register.r10, 0)  # счётчик
         while_start: int = program.current_command_address
 
         program.add_instruction(Opcode.CMP, Register.r9, Register.r0)
@@ -157,15 +155,11 @@ def ast_to_machine_code_assign(node: AstNode, program: Program) -> None:
             program.clear_variable_in_registers(name)
 
         elif node.children[1].astType == AstType.STRING:
-            # todo тут хз
             new_address: int = program.add_variable_to_static_memory(node.children[1].value)
             st_literal_by_stack_offset(program, StaticMemoryAddressStub(new_address), addr)
             program.clear_variable_in_registers(name)
 
         elif node.children[1].astType == AstType.READ:
-            # todo
-            # можно сделать тут специальную команду, которая просто в динамическую память будет срать строки
-            # ast_to_machine_code_read(program)
             ast_to_machine_code_read(program)
             program.add_instruction(Opcode.ST_STACK, Register.r9, addr)  # update var value
             program.clear_variable_in_registers(name)
@@ -230,7 +224,6 @@ def ast_to_machine_code_mod(node: AstNode, program: Program,
                             reg1: Register = Register.r9,
                             reg2: Register = Register.r10,
                             ):
-    # ast_to_machine_code_div_2(node, program)
     program.add_instruction(Opcode.MOD, reg1, reg2)
 
 
@@ -292,26 +285,30 @@ def ast_to_machine_code_div(node: AstNode, program: Program) -> int:
 
 def ast_to_machine_code_read(program: Program) -> None:
     # todo короче подумать, тут как-то можно будет сделать так, чтобы оно на адресах работало (наверно)
+
     program.add_instruction(Opcode.PUSH, Register.r8)
     program.add_instruction(Opcode.LD_LITERAL, Register.r9, 0)  # прочитанный символ
     program.add_instruction(Opcode.LD_LITERAL, Register.r11, 0)  # счетчик
-    program.add_instruction(Opcode.LD_ADDR, Register.r8, StaticMemoryAddressStub(-1))
+    program.add_instruction(Opcode.MV, Register.r16,
+                            Register.r8)  # в r16 лежит адрес начала строки в динамической памяти
     program.add_instruction(Opcode.MV, Register.r8,
                             Register.r12)  # в r8 адрес начала буфера (сохраянем в r12 адрес начала буфера)
     do_while_start = program.current_command_address
     program.add_instruction(Opcode.READ, Register.r9, 0)
     program.add_instruction(Opcode.CMP, Register.r9, Register.r0)  # если символ равен 0, то строка закончилась
-    program.add_instruction(Opcode.JE, do_while_start + 8)
+    program.add_instruction(Opcode.JE, do_while_start + 7)
     program.add_instruction(Opcode.INC, Register.r11)  # инкрементируем счетчик
     program.add_instruction(Opcode.INC, Register.r12)  # переход на следующий адрес буффера
-    program.add_instruction(Opcode.ST, Register.r9, Register.r12)  # сохраняем символ в буффер
+    program.add_instruction(Opcode.ST, Register.r9, Register.r12)  # сохраняем символ в r9 в буффер
     program.add_instruction(Opcode.JMP, do_while_start)
     program.add_instruction(Opcode.INC, Register.r12)
     program.add_instruction(Opcode.ST, Register.r0, Register.r12)  # добавить нуль терминатор в конец строки
+    program.add_instruction(Opcode.INC, Register.r8)
     program.add_instruction(Opcode.MV, Register.r8, Register.r9)  # save read string address in r9
     program.add_instruction(Opcode.ADD, Register.r8, Register.r11)
-    program.add_instruction(Opcode.INC, Register.r8)
-    program.add_instruction(Opcode.ST_ADDR, Register.r8, StaticMemoryAddressStub(-1))
+    program.add_instruction(Opcode.ST, Register.r8, Register.r16)
+    program.add_instruction(Opcode.ADD, Register.r16, Register.r11)
+    program.add_instruction(Opcode.INC, Register.r16)
     program.add_instruction(Opcode.POP, Register.r8)
 
 

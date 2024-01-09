@@ -1,5 +1,6 @@
-let c = read_char();
-  while(c != 0) {
-    print_char(c);
-    c = read_char();
-  }
+let greet = "Who are you?\n";
+let name = read();
+print_string(greet);
+print_string("\n");
+print_string("Hello, ");
+print_string(name);

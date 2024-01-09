@@ -106,7 +106,6 @@ class Program:
         return self.current_static_offset - size
 
     def add_strings_to_static_memory(self) -> None:
-        # static_memory_start_addr: int = self.current_command_address
         static_memory_start_addr: int = 0
         for instruction in self.machine_code:
             if isinstance(instruction.arg1, StaticMemoryAddressStub) and instruction.arg1.offset >= 0:
@@ -118,10 +117,7 @@ class Program:
 
     def resolve_static_mem(self) -> list[int] | None:
         self.add_strings_to_static_memory()
-        # for data in self.static_memory:
-        #     self.add_instruction(Opcode.JMP, data)
         static_mem_end = self.current_command_address - 1
-        # self.add_instruction(Opcode.JMP, self.current_command_address + 1)  # begin of read buffer
         for instruction in self.machine_code:
             if isinstance(instruction.arg1, StaticMemoryAddressStub) and instruction.arg1.offset < 0:
                 instruction.arg1 = -instruction.arg1.offset + static_mem_end
