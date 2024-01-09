@@ -109,10 +109,8 @@ class Program:
         for instruction in self.machine_code:
             if isinstance(instruction.arg1, StaticMemoryAddressStub) and instruction.arg1.offset >= 0:
                 instruction.arg1 = instruction.arg1.offset + static_memory_start_addr
-                instruction.static_data = 1
             if isinstance(instruction.arg2, StaticMemoryAddressStub) and instruction.arg2.offset >= 0:
                 instruction.arg2 = instruction.arg2.offset + static_memory_start_addr
-                instruction.static_data = 1
 
     def resolve_static_mem(self) -> list[int] | None:
         self.add_strings_to_static_memory()
@@ -120,10 +118,8 @@ class Program:
         for instruction in self.machine_code:
             if isinstance(instruction.arg1, StaticMemoryAddressStub) and instruction.arg1.offset < 0:
                 instruction.arg1 = -instruction.arg1.offset + static_mem_end
-                instruction.static_data = 1
             if isinstance(instruction.arg2, StaticMemoryAddressStub) and instruction.arg2.offset < 0:
                 instruction.arg2 = -instruction.arg2.offset + static_mem_end
-                instruction.static_data = 1
         return self.static_memory
 
     def load_variable(self, var_name: str) -> Register:

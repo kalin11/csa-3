@@ -27,7 +27,7 @@ def test_translator_and_machine(golden, caplog):
             file.write(golden["static_mem"])
 
         with contextlib.redirect_stdout(io.StringIO()) as stdout:
-            translator.main(source, target)
+            translator.main(source, target, static_mem)
             print("============================================================")
             virtual_machine.main(target, input_stream, static_mem)
 

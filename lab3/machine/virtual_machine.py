@@ -223,7 +223,7 @@ class ControlUnit:
         self.tick()
         self.data_path.latch_register(DR, register_data)
         self.tick()
-        self.data_path.work_with_memory(False, True, address, static_data=1)
+        self.data_path.work_with_memory(False, True, address)
         self.tick()
 
     def st(self, instruction: MachineWord) -> None:

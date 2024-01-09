@@ -8,13 +8,13 @@ from lab3.interpreter.program import Program, inverted_conditions, ast_type2opco
 from lab3.machine.isa import write_machine_code_to_file, MachineWord, Opcode, Register, StaticMemoryAddressStub
 
 
-def ast_to_machine_code(root: AstNode) -> list[MachineWord]:
+def ast_to_machine_code(root: AstNode, static_mem: str) -> list[MachineWord]:
     program = Program()
     for child in root.children:
         ast_to_machine_code_rec(child, program)
     program.add_instruction(Opcode.HALT)
     static_memory: list[int] = program.resolve_static_mem()
-    with open("../../static_mem.txt", "w") as file:
+    with open(static_mem, "w") as file:
         # Преобразуем числа в строки и записываем их в файл
         file.write(" ".join(map(str, static_memory)))
     return program.machine_code
@@ -233,59 +233,7 @@ def st_literal_by_stack_offset(program: Program, value: int | StaticMemoryAddres
     program.add_instruction(Opcode.ST_STACK, reg, var_addr)
 
 
-def ast_to_machine_code_div(node: AstNode, program: Program) -> int:
-    prog_begin = program.add_instruction(Opcode.PUSH, Register.r2)  # r_addr
-    program.add_instruction(Opcode.PUSH, Register.r3)  # q_addr
-    program.add_instruction(Opcode.PUSH, Register.r4)  # bits_num_addr
-    program.add_instruction(Opcode.PUSH, Register.r11)  # tmp
-    program.add_instruction(Opcode.PUSH, Register.r12)  # tmp
-
-    program.add_instruction(Opcode.LD_LITERAL, Register.r12, 1)  # надо для вычисения 1 бита
-    program.add_instruction(Opcode.LD_LITERAL, Register.r2, 0)
-    program.add_instruction(Opcode.LD_LITERAL, Register.r3, 0)
-    program.add_instruction(Opcode.LD_LITERAL, Register.r4, 0)
-
-    program.add_instruction(Opcode.PUSH, Register.r9)
-
-    loop_start = program.add_instruction(Opcode.CMP, Register.r9, Register.r0)  # in r4 количество бит в N
-    program.add_instruction(Opcode.JE, loop_start + 5)
-    program.add_instruction(Opcode.SHR, Register.r9, Register.r12)
-    program.add_instruction(Opcode.INC, Register.r4)
-    program.add_instruction(Opcode.JMP, loop_start)
-
-    program.add_instruction(Opcode.DEC, Register.r4)
-    program.add_instruction(Opcode.POP, Register.r9)
-    loop_start = program.add_instruction(Opcode.CMP, Register.r4, Register.r0)
-    program.add_instruction(Opcode.JL, loop_start + 16)
-    program.add_instruction(Opcode.SHL, Register.r2, Register.r12)
-    program.add_instruction(Opcode.MV, Register.r9, Register.r11)
-    program.add_instruction(Opcode.SHR, Register.r11, Register.r4)
-    program.add_instruction(Opcode.AND, Register.r11, Register.r12)
-    program.add_instruction(Opcode.ADD, Register.r2, Register.r11)
-
-    if_begin = program.add_instruction(Opcode.CMP, Register.r2, Register.r10)
-    program.add_instruction(Opcode.JL, if_begin + 6)
-    program.add_instruction(Opcode.SUB, Register.r2, Register.r10)
-    program.add_instruction(Opcode.SHL, Register.r3, Register.r12)
-    program.add_instruction(Opcode.ADD, Register.r3, Register.r12)
-    program.add_instruction(Opcode.JMP, if_begin + 7)
-    program.add_instruction(Opcode.SHL, Register.r3, Register.r12)  # else
-    program.add_instruction(Opcode.DEC, Register.r4)
-    program.add_instruction(Opcode.JMP, loop_start)
-    program.add_instruction(Opcode.MV, Register.r3, Register.r9)
-    program.add_instruction(Opcode.MV, Register.r2, Register.r10)
-
-    program.add_instruction(Opcode.POP, Register.r12)
-    program.add_instruction(Opcode.POP, Register.r11)
-    program.add_instruction(Opcode.POP, Register.r4)
-    program.add_instruction(Opcode.POP, Register.r3)
-    program.add_instruction(Opcode.POP, Register.r2)
-    return prog_begin
-
-
 def ast_to_machine_code_read(program: Program) -> None:
-    # todo короче подумать, тут как-то можно будет сделать так, чтобы оно на адресах работало (наверно)
-
     program.add_instruction(Opcode.PUSH, Register.r8)
     program.add_instruction(Opcode.LD_LITERAL, Register.r9, 0)  # прочитанный символ
     program.add_instruction(Opcode.LD_LITERAL, Register.r11, 0)  # счетчик
@@ -316,14 +264,14 @@ def ast_to_machine_code_read_char(program: Program) -> None:
     program.add_instruction(Opcode.READ, Register.r10, 0)
 
 
-def main(source, target) -> None:
+def main(source, target, static_mem) -> None:
     with open(source, encoding="utf-8") as source_file:
         source = source_file.read()
     ast = parse(source)
-    write_machine_code_to_file(target, ast_to_machine_code(ast))
+    write_machine_code_to_file(target, ast_to_machine_code(ast, static_mem))
 
 
 if __name__ == "__main__":
     assert len(sys.argv) == 3, "Wrong args: translator.py <source> <target>"
-    _, source, target = sys.argv
-    main(source, target)
+    _, source, target, static_mem = sys.argv
+    main(source, target, static_mem)
