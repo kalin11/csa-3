@@ -89,13 +89,13 @@ AR: Register = Register.r15
 
 
 class MachineWord:
-    id: int
+    index: int
     opcode: Opcode
     arg1: int | Register | StaticMemoryAddressStub
     arg2: int | Register | StaticMemoryAddressStub
 
-    def __init__(self, id: int, opcode: Opcode, arg1=None, arg2=None):
-        self.id = id
+    def __init__(self, index: int, opcode: Opcode, arg1=None, arg2=None):
+        self.index = index
         self.opcode = opcode
         self.arg1 = arg1
         self.arg2 = arg2
@@ -108,7 +108,7 @@ def write_machine_code_to_file(filename: str, code: list[MachineWord]) -> None:
             buf.append(
                 json.dumps(
                     {
-                        "index": instr.id,
+                        "index": instr.index,
                         "opcode": instr.opcode.value,
                         "arg1": instr.arg1,
                         "arg2": instr.arg2,

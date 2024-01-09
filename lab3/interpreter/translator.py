@@ -3,9 +3,9 @@ from __future__ import annotations
 import sys
 
 from lab3.exceptions.illegal_token_error import IllegalTokenError
-from lab3.interpreter.parser import parse, AstNode, AstType
-from lab3.interpreter.program import Program, inverted_conditions, ast_type2opcode
-from lab3.machine.isa import write_machine_code_to_file, MachineWord, Opcode, Register, StaticMemoryAddressStub
+from lab3.interpreter.parser import AstNode, AstType, parse
+from lab3.interpreter.program import Program, ast_type2opcode, inverted_conditions
+from lab3.machine.isa import MachineWord, Opcode, Register, StaticMemoryAddressStub, write_machine_code_to_file
 
 
 def ast_to_machine_code(root: AstNode, static_mem: str) -> list[MachineWord]:

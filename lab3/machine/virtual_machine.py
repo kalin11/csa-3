@@ -4,7 +4,8 @@ import logging
 import sys
 from enum import Enum
 
-from lab3.machine.isa import MachineWord, Opcode, Register, SP, PC, DR, read_code_from_file
+from lab3.exceptions.unknown_opcode_error import UnknownOpcodeError
+from lab3.machine.isa import DR, PC, SP, MachineWord, Opcode, Register, read_code_from_file
 
 
 class Alu:
@@ -44,7 +45,7 @@ class Alu:
         if operation is not None:
             res = operation(arg1, arg2)
         else:
-            raise ValueError(f"Unknown opcode {opcode}")
+            raise UnknownOpcodeError(opcode)
         self.set_flags(res)
         return res
 
@@ -405,7 +406,7 @@ class ControlUnit:
         instr = self.data_path.instruction_memory[self.data_path.registers[PC]]
         opcode = str(instr.opcode)
 
-        instr_repr = "  ('{}'@{}:{} {})".format(instr.id, opcode, instr.arg1, instr.arg2)
+        instr_repr = "  ('{}'@{}:{} {})".format(instr.index, opcode, instr.arg1, instr.arg2)
 
         return "{} \t{}".format(state_repr, instr_repr)
 
