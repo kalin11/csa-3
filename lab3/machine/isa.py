@@ -93,14 +93,12 @@ class MachineWord:
     opcode: Opcode
     arg1: int | Register | StaticMemoryAddressStub
     arg2: int | Register | StaticMemoryAddressStub
-    static_data: int # 0 если arg2 относится не к статике, 1 если к статике
 
-    def __init__(self, id: int, opcode: Opcode, arg1=None, arg2=None, static_data: int = 0):
+    def __init__(self, id: int, opcode: Opcode, arg1=None, arg2=None):
         self.id = id
         self.opcode = opcode
         self.arg1 = arg1
         self.arg2 = arg2
-        self.static_data = static_data
 
 
 def write_machine_code_to_file(filename: str, code: list[MachineWord]) -> None:
@@ -114,7 +112,6 @@ def write_machine_code_to_file(filename: str, code: list[MachineWord]) -> None:
                         "opcode": instr.opcode.value,
                         "arg1": instr.arg1,
                         "arg2": instr.arg2,
-                        "static_data": instr.static_data
                     },
                     cls=EnumEncoder,
                 )
@@ -138,7 +135,6 @@ def read_code_from_file(filename: str) -> list[MachineWord]:
             Opcode[instr["opcode"]],
             convert_to_register(instr["arg1"]),
             convert_to_register(instr["arg2"]),
-            instr["static_data"]
         )
         prog.append(word)
     for index in range(len(prog), data_memory_size):

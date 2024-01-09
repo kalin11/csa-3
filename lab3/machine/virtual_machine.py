@@ -200,12 +200,11 @@ class ControlUnit:
         address_to_read: int = self.data_path.execute_arithmetic(Opcode.ADD, 0,
                                                                  self.data_path.registers[address_register])
         self.tick()
-        if instruction.static_data == 1:
-            data: int = self.data_path.work_with_memory(True, False, address_to_read)
-            self.data_path.latch_register(DR, data)  # в DR значение
-            self.tick()
-            self.data_path.latch_register(register_to, data)
-            self.tick()
+        data: int = self.data_path.work_with_memory(True, False, address_to_read)
+        self.data_path.latch_register(DR, data)  # в DR значение
+        self.tick()
+        self.data_path.latch_register(register_to, data)
+        self.tick()
 
     def ld_stack(self, instruction: MachineWord) -> None:
         register_to: Register = instruction.arg1

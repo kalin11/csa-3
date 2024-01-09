@@ -124,14 +124,14 @@ def ast_to_machine_code_print(node: AstNode, program: Program) -> None:
             assert var_addr is not None
             program.add_instruction(Opcode.LD_STACK, Register.r9, var_addr)
         program.add_instruction(Opcode.MV, Register.r9, Register.r11)  # адрес буффера из r9 в r11
-        program.add_instruction(Opcode.LD, Register.r9, Register.r9, static_data=1)  # теперь в r9 первый символ строки
+        program.add_instruction(Opcode.LD, Register.r9, Register.r9)  # теперь в r9 первый символ строки
         while_start: int = program.current_command_address
 
         program.add_instruction(Opcode.CMP, Register.r9, Register.r0)
         program.add_instruction(Opcode.JE, while_start + 6)
         program.add_instruction(Opcode.PRINT, Register.r9, 0)
         program.add_instruction(Opcode.INC, Register.r11)
-        program.add_instruction(Opcode.LD, Register.r9, Register.r11, static_data=1)
+        program.add_instruction(Opcode.LD, Register.r9, Register.r11)
         program.add_instruction(Opcode.JMP, while_start)
 
 

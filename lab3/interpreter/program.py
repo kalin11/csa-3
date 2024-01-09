@@ -47,9 +47,8 @@ class Program:
             opcode: Opcode,
             arg1: int | Register | StaticMemoryAddressStub = 0,
             arg2: int | Register | StaticMemoryAddressStub = 0,
-            static_data: int = 0
     ) -> int:
-        self.machine_code.append(MachineWord(self.current_command_address, opcode, arg1, arg2, static_data))
+        self.machine_code.append(MachineWord(self.current_command_address, opcode, arg1, arg2))
         self.current_command_address += 1
         return self.current_command_address - 1
 
