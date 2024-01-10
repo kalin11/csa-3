@@ -85,8 +85,6 @@ DR: Register = Register.r13
 
 PC: Register = Register.r1
 
-AR: Register = Register.r15
-
 
 class MachineWord:
     index: int

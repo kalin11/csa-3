@@ -92,7 +92,7 @@ def ast_to_machine_code_print(node: AstNode, program: Program) -> None:
         loop_begin = program.add_instruction(Opcode.LD_LITERAL, Register.r10, 10)
         program.add_instruction(Opcode.MV, Register.r9, Register.r8)
         ast_to_machine_code_mod(node, program, Register.r8, Register.r10)
-        ast_to_machine_code_div_2(node, program)
+        ast_to_machine_code_div(node, program)
         program.add_instruction(Opcode.MV, Register.r8, Register.r10)
         program.add_instruction(Opcode.ADD_LITERAL, Register.r10, 48)
         cmp_addr = program.add_instruction(Opcode.CMP, Register.r9, Register.r0)
@@ -200,7 +200,7 @@ def ast_to_machine_code_math_rec(node: AstNode, program: Program, is_left: bool 
 
 def perform_userspace_math(node: AstNode, program: Program) -> bool:
     if node.astType is AstType.DIV:
-        ast_to_machine_code_div_2(node, program)
+        ast_to_machine_code_div(node, program)
         return True
     if node.astType is AstType.MOD:
         ast_to_machine_code_mod(node, program)
@@ -215,8 +215,8 @@ def ast_to_machine_code_mul(program: Program):
     program.add_instruction(Opcode.MUL, Register.r9, Register.r10)
 
 
-def ast_to_machine_code_div_2(node: AstNode, program: Program, reg1: Register = Register.r9,
-                              reg2: Register = Register.r10) -> None:
+def ast_to_machine_code_div(node: AstNode, program: Program, reg1: Register = Register.r9,
+                            reg2: Register = Register.r10) -> None:
     program.add_instruction(Opcode.DIV, reg1, reg2)
 
 
@@ -272,6 +272,6 @@ def main(source, target, static_mem) -> None:
 
 
 if __name__ == "__main__":
-    assert len(sys.argv) == 3, "Wrong args: translator.py <source> <target>"
+    assert len(sys.argv) == 4, "Wrong args: translator.py <source> <target>"
     _, source, target, static_mem = sys.argv
     main(source, target, static_mem)

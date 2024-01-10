@@ -251,7 +251,7 @@ rx13 - data register
 
 rx14 - stack pointer
 
-rx15 - временные регистр
+rx15 - временной регистр
 
 rx16 - ptr for dynamic mem
 ```
@@ -317,6 +317,7 @@ print_string(da);
 ```
 
 Журнал выглядит следующим образом:
+
 ```
 DEBUG virtual_machine:simulation TICK:   0 PC:   0  MEM_OUT: r4 0 reg: 'r0': 0, 'r1': 0, 'r2': 0, 'r3': 0, 'r4': 0, 'r5': 0, 'r6': 0, 'r7': 0, 'r8': 0, 'r9': 0, 'r10': 0, 'r11': 0, 'r12': 0, 'r13': 0, 'r14': 2047, 'r15': 0, 'r16': 11 	  ('0'@Opcode.LD_LITERAL:Register.r4 0)
 DEBUG virtual_machine:simulation TICK:   3 PC:   1  MEM_OUT: r4 0 reg: 'r0': 0, 'r1': 1, 'r2': 0, 'r3': 0, 'r4': 0, 'r5': 0, 'r6': 0, 'r7': 0, 'r8': 0, 'r9': 0, 'r10': 0, 'r11': 0, 'r12': 0, 'r13': Register.r4, 'r14': 2047, 'r15': 0, 'r16': 11 	  ('1'@Opcode.PUSH:Register.r4 0)
@@ -378,6 +379,7 @@ INFO virtual_machine:simulation output_buffer: 'hello\n'
 ### CI
 
 CI проходит на GitHub
+
 ```yaml
 name: CI
 
@@ -395,37 +397,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Install poetry
-      run: pip install poetry
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.12"
-        cache: "poetry"
-    - name: Install project
-      run: |
-        poetry install
-    - name: Lint with ruff
-      run: |
-        poetry run python -m ruff lab3
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pip install poetry
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+          cache: "poetry"
+      - name: Install project
+        run: |
+          poetry install
+      - name: Lint with ruff
+        run: |
+          poetry run python -m ruff lab3
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Install poetry
-      run: pip install poetry
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.12"
-        cache: "poetry"
-    - name: Install project
-      run: |
-        poetry install
-    - name: Run tests
-      run: |
-        poetry run pytest ./tests -v
+      - uses: actions/checkout@v4
+      - name: Install poetry
+        run: pip install poetry
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+          cache: "poetry"
+      - name: Install project
+        run: |
+          poetry install
+      - name: Run tests
+        run: |
+          poetry run pytest ./tests -v
     needs: lint
 ```
 
@@ -438,6 +440,7 @@ jobs:
 ```shell
 $  poetry run pytest ./tests -v
 ```
+
 ```
 ================================ test session starts =================================
 platform linux -- Python 3.12.1, pytest-7.4.4, pluggy-1.3.0 -- /home/kalin/PycharmProjects/csa-lab-3-last/.venv/bin/python
