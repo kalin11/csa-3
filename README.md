@@ -372,7 +372,7 @@ DEBUG virtual_machine:simulation TICK: 179 PC:  17  MEM_OUT: 0 0 reg: 'r0': 0, '
 INFO virtual_machine:simulation output_buffer: 'hello\n'
 ```
 
-Интеграциооные тесты реализованы здесь [tests](./tests/test_machine.py):
+Интеграционные тесты реализованы здесь [tests](./tests/test_machine.py):
 
 - использованы golden тесты, конфигурация которых лежит в папке [golden](./tests/golden)
 
