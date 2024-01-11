@@ -237,8 +237,8 @@ def ast_to_machine_code_read(program: Program) -> None:
     program.add_instruction(Opcode.PUSH, Register.r8)
     program.add_instruction(Opcode.LD_LITERAL, Register.r9, 0)  # прочитанный символ
     program.add_instruction(Opcode.LD_LITERAL, Register.r11, 0)  # счетчик
-    program.add_instruction(Opcode.MV, Register.r16,
-                            Register.r8)  # в r16 лежит адрес начала строки в динамической памяти
+    program.add_instruction(Opcode.MV, Register.r2,
+                            Register.r8)  # в r2 лежит адрес начала строки в динамической памяти
     program.add_instruction(Opcode.MV, Register.r8,
                             Register.r12)  # в r8 адрес начала буфера (сохраянем в r12 адрес начала буфера)
     do_while_start = program.current_command_address
@@ -254,9 +254,9 @@ def ast_to_machine_code_read(program: Program) -> None:
     program.add_instruction(Opcode.INC, Register.r8)
     program.add_instruction(Opcode.MV, Register.r8, Register.r9)  # save read string address in r9
     program.add_instruction(Opcode.ADD, Register.r8, Register.r11)
-    program.add_instruction(Opcode.ST, Register.r8, Register.r16)
-    program.add_instruction(Opcode.ADD, Register.r16, Register.r11)
-    program.add_instruction(Opcode.INC, Register.r16)
+    program.add_instruction(Opcode.ST, Register.r8, Register.r2)
+    program.add_instruction(Opcode.ADD, Register.r2, Register.r11)
+    program.add_instruction(Opcode.INC, Register.r2)
     program.add_instruction(Opcode.POP, Register.r8)
 
 

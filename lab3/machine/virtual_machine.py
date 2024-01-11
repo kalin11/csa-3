@@ -74,7 +74,7 @@ class DataPath:
         self.data_memory = [None] * memory_size
         self.input_ports = ports
         self.output_ports[0] = []
-        for register_number in range(0, 17):
+        for register_number in range(0, 16):
             self.registers[Register(register_number)] = 0
         self.registers[SP] = self.memory_size - 1
 
@@ -428,7 +428,7 @@ def simulation(mem: list[MachineWord], input_tokens: list[str], limit: int, stat
         # Преобразование строк в целые числа
         numbers = [int(num) for num in numbers_str]
         data_path.data_memory[:len(numbers)] = numbers
-        data_path.registers[Register.r16] = len(numbers)
+        data_path.registers[Register.r2] = len(numbers)
 
     logging.debug("%s", control_unit)
     try:

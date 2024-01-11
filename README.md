@@ -234,14 +234,14 @@ print_string(da);
 
 ![schema](./resources/csa-3-schema.png)
 
-Модель процессора имеет 17 регистров:
+Модель процессора имеет 16 регистров:
 
 ```
 rx0 - хардкод 0
 
 rx1 (program counter) - адрес следующей инструкции
 
-rx2 - данные в/из data memory 
+rx2 - ptr for dynamic mem 
 
 rx3 - rx8 - регистры общего назначения
 
@@ -252,8 +252,6 @@ rx13 - data register
 rx14 - stack pointer
 
 rx15 - временной регистр
-
-rx16 - ptr for dynamic mem
 ```
 
 Ввод и вывод имеет порты
