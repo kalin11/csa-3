@@ -459,7 +459,8 @@ tests/test_machine.py::test_translator_and_machine[golden/hello_user.yml] PASSED
 ```
 
 ```text
-| Лысенко Артём Константинович      | print_string |  | 3 |          | 17  | 49   | 180  |
-| Лысенко Артём Константинович      | prob5        |  | 13|          | 101 | 1717 | 7722 |
-| Лысенко Артём Константинович      | hello_user   |  | 6 |          | 64  | 235  | 842  |
+| ФИО                               | алг          | LoC |  code byte  | code instr | instr count | ticks |                                       вариант
+| Лысенко Артём Константинович      | print_string | 3   |      -      |    17      |      49     | 180   |  alg | risc | harv | hw | instr | struct | stream | port | cstr | prob5 | pipeline
+| Лысенко Артём Константинович      | prob5        | 13  |      -      |    101     |     1717    | 7722  |  alg | risc | harv | hw | instr | struct | stream | port | cstr | prob5 | pipeline
+| Лысенко Артём Константинович      | hello_user   | 6   |      -      |    64      |      235    | 842   |  alg | risc | harv | hw | instr | struct | stream | port | cstr | prob5 | pipeline
 ```
